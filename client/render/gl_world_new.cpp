@@ -544,7 +544,7 @@ static void Mod_LoadWorldLights( const byte *base, const dlump_t *l )
 
 	out = world->worldlights;
 
-	for( i = 0; i < count; i++, out++ )
+	for( i = 0; i < count; i++ )
 	{
 		if( out->emittype == emit_ignored )
 			continue;
