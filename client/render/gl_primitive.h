@@ -66,7 +66,7 @@ public:
 	void ComputeViewDistance( const Vector &absmin, const Vector &absmax );
 	void ComputeScissor( const Vector &absmin, const Vector &absmax );
 	virtual bool IsTranslucent( void ) { return true; }
-	void RequestScreencopy( bool copyColor = true, bool copyDepth = true );
+	void RequestScreencopy( bool copyColor = true, bool copyDepth = true, bool isFuncWater = false);
 	void RenderScissorDebug( void );
 
 	float		m_flViewDist;

@@ -74,6 +74,7 @@ void CTransEntry :: ComputeScissor( const Vector &absmin, const Vector &absmax )
 	else m_bScissorReady = false;
 }
 
+/*
 void CTransEntry::RequestScreencopy(bool copyColor, bool copyDepth)
 {
 	if (!m_bScissorReady) {
@@ -129,6 +130,7 @@ void CTransEntry::RequestScreencopy(bool copyColor, bool copyDepth)
 		}
 	}
 }
+*/
 
 void CTransEntry::RequestScreencopy(bool copyColor, bool copyDepth, bool isFuncWater)
 {
