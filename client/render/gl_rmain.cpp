@@ -896,12 +896,29 @@ void R_RenderTransList( void )
 		switch( entry->m_bDrawType )
 		{
 		case DRAWTYPE_SURFACE:
+			if (entry->m_pSurf && entry->m_pSurf->texinfo && entry->m_pSurf->texinfo->texture && entry->m_pSurf->texinfo->texture->name)
+			{
+				if (strstr(entry->m_pSurf->texinfo->texture->name, "func_water"))
+				{
+					entry->RequestScreencopy(true, true, true);
+				}
+				else
+				{
+					entry->RequestScreencopy(true, true, false);
+				}
+			}
+			else
+			{
+				entry->RequestScreencopy(true, true, false);
+			}
 			R_RenderTransSurface( entry );
 			break;
 		case DRAWTYPE_MESH:
+			entry->RequestScreencopy(true, true, false);
 			R_RenderTransMesh( entry );
 			break;
 		case DRAWTYPE_QUAD:
+			entry->RequestScreencopy(true, true, false);
 			R_RenderQuadPrimitive( entry );
 			break;
 		}

@@ -130,6 +130,68 @@ void CTransEntry::RequestScreencopy(bool copyColor, bool copyDepth)
 	}
 }
 
+void CTransEntry::RequestScreencopy(bool copyColor, bool copyDepth, bool isFuncWater)
+{
+	if (!m_bScissorReady) {
+		return;
+	}
+
+	ASSERT(copyColor || copyDepth);
+	bool hdr_rendering = CVAR_TO_BOOL(gl_hdr);
+	float y2 = (float)RI->view.port[3] - m_vecRect.w - m_vecRect.y;
+
+	if (hdr_rendering)
+	{
+		GLenum filtering = 0;
+		GLbitfield bufferMask = 0;
+		if (copyColor && copyDepth) {
+			bufferMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
+			filtering = GL_NEAREST;
+		}
+		else if (copyColor) {
+			bufferMask = GL_COLOR_BUFFER_BIT;
+			filtering = GL_LINEAR; // so, why?
+		}
+		else if (copyDepth) {
+			bufferMask = GL_DEPTH_BUFFER_BIT;
+			filtering = GL_NEAREST;
+		}
+
+		// Handle func_water separately
+		if (isFuncWater) {
+			pglBindFramebuffer(GL_DRAW_FRAMEBUFFER, tr.screencopy_fbo_func_water->id);
+		} else {
+			pglBindFramebuffer(GL_DRAW_FRAMEBUFFER, tr.screencopy_fbo->id);
+		}
+		
+		pglBlitFramebuffer(
+			m_vecRect.x, 
+			y2, 
+			m_vecRect.x + m_vecRect.z, 
+			y2 + m_vecRect.w, m_vecRect.x, 
+			y2, 
+			m_vecRect.x + m_vecRect.z, 
+			y2 + m_vecRect.w, 
+			bufferMask, 
+			filtering
+		);
+		pglBindFramebuffer(GL_FRAMEBUFFER_EXT, glState.frameBuffer);
+	}
+	else
+	{
+		if (copyColor) 
+		{
+			GL_Bind(GL_TEXTURE0, tr.screen_color);
+			pglCopyTexSubImage2D(GL_TEXTURE_2D, 0, m_vecRect.x, y2, m_vecRect.x, y2, m_vecRect.z, m_vecRect.w);
+		}
+		if (copyDepth)
+		{
+			GL_Bind(GL_TEXTURE0, tr.screen_depth);
+			pglCopyTexSubImage2D(GL_TEXTURE_2D, 0, m_vecRect.x, y2, m_vecRect.x, y2, m_vecRect.z, m_vecRect.w);
+		}
+	}
+}
+
 void CTransEntry :: RenderScissorDebug( void )
 {
 	if( !m_bScissorReady ) return;
